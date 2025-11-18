@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { CreateTodoDto } from './todo.dto/create-todo.dto';
 
 @Injectable()
 export class TodoService {
-  create(): string {
-    return 'this will create a new item will it? this works';
+  create(createTodoDto: CreateTodoDto) {
+    return {
+      message: 'Received DTO',
+      data: createTodoDto,
+    };
   }
 
   update(): string {
