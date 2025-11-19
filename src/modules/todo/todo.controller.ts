@@ -21,7 +21,7 @@ export class TodoController {
   }
 
   @Get()
-  findAll(): string {
+  findAll() {
     return this.todoService.findAll();
   }
 }

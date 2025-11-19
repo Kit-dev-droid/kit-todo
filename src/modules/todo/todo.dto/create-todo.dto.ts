@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsBoolean } from 'class-validator';
 
 export class CreateTodoDto {
   @IsString()
@@ -10,4 +10,7 @@ export class CreateTodoDto {
 
   @IsNumber()
   priority: number;
+
+  @IsBoolean()
+  complete: boolean;
 }
