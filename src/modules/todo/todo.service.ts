@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './todo.dto/create-todo.dto';
+import { UpdateTodoDto } from './todo.dto/update-todp.dto';
 import { v4 as uuid } from 'uuid';
 
 export interface Todo {
@@ -30,8 +31,14 @@ export class TodoService {
     };
   }
 
-  update(): string {
-    return 'this will update an existing record';
+  update(updateDto: UpdateTodoDto) {
+    this.todoItems = this.todoItems.map((item) =>
+      item.id === updateDto.id ? { ...item, ...updateDto } : item,
+    );
+    return {
+      message: 'updated',
+      data: this.todoItems,
+    };
   }
 
   delete(id) {
