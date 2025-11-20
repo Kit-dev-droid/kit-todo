@@ -34,8 +34,12 @@ export class TodoService {
     return 'this will update an existing record';
   }
 
-  delete(): string {
-    return 'This will delete the record';
+  delete(id) {
+    this.todoItems = this.todoItems.filter((item) => item.id !== id);
+    return {
+      message: 'Deleted',
+      data: this.todoItems,
+    };
   }
 
   findAll() {
