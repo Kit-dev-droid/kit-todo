@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './todo.dto/create-todo.dto';
 import { UpdateTodoDto } from './todo.dto/update-todp.dto';
 import { v4 as uuid } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ToDo } from './todo.entity';
+import { Repository } from 'typeorm';
 
 export interface Todo {
   id: string;
@@ -13,8 +16,12 @@ export interface Todo {
 
 @Injectable()
 export class TodoService {
-  todoItems: Todo[] = [];
-  create(createTodoDto: CreateTodoDto) {
+  constructor(
+    @InjectRepository(ToDo)
+    private toDoRepository: Repository<ToDo>,
+  ) {}
+
+  async create(createTodoDto: CreateTodoDto) {
     const todo = {
       id: uuid(),
       name: createTodoDto.name,
@@ -23,7 +30,7 @@ export class TodoService {
       complete: createTodoDto.complete,
     };
 
-    this.todoItems.push(todo);
+    await this.toDoRepository.save(todo);
 
     return {
       message: 'Received DTO',
@@ -31,28 +38,21 @@ export class TodoService {
     };
   }
 
-  update(updateDto: UpdateTodoDto) {
-    this.todoItems = this.todoItems.map((item) =>
-      item.id === updateDto.id ? { ...item, ...updateDto } : item,
-    );
+  async update(id: string, updateDto: UpdateTodoDto) {
+    await this.toDoRepository.update(id, updateDto);
+
+    const updateToDO = await this.toDoRepository.findOne({ where: { id } });
     return {
       message: 'updated',
-      data: this.todoItems,
+      data: updateToDO,
     };
   }
 
-  delete(id) {
-    this.todoItems = this.todoItems.filter((item) => item.id !== id);
-    return {
-      message: 'Deleted',
-      data: this.todoItems,
-    };
+  async delete(id: string): Promise<void> {
+    await this.toDoRepository.delete(id);
   }
 
-  findAll() {
-    return {
-      message: 'Received DTO',
-      data: this.todoItems,
-    };
+  findAll(): Promise<ToDo[]> {
+    return this.toDoRepository.find();
   }
 }
